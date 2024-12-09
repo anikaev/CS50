@@ -168,15 +168,23 @@ class CrosswordCreator():
 
     def consistent(self, assignment):
         """
-        Возвращает True, если `assignment` согласовано (слова уникальны и соответствуют пересечениям);
+        Возвращает True, если `assignment` согласовано (слова уникальны, соответствуют длине переменных и пересечениям);
         иначе False.
         """
         words = set()
         for var, word in assignment.items():
             # Проверка уникальности слов
             if word in words:
+                print(f"Слово '{word}' используется более одного раза.")
                 return False
             words.add(word)
+
+            # Проверка длины слова
+            if len(word) != var.length:
+                print(
+                    f"Слово '{word}' не соответствует длине переменной {var}. Ожидалась длина {var.length}, а получена {len(word)}.")
+                return False
+
             # Проверка пересечений
             for neighbor in self.crossword.neighbors(var):
                 if neighbor in assignment:
@@ -184,6 +192,8 @@ class CrosswordCreator():
                     if overlap:
                         i, j = overlap
                         if word[i] != assignment[neighbor][j]:
+                            print(
+                                f"Несоответствие в пересечении между переменными {var} и {neighbor}: '{word[i]}' != '{assignment[neighbor][j]}'")
                             return False
         return True
 
